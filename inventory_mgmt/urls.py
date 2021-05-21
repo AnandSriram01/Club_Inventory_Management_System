@@ -27,4 +27,6 @@ urlpatterns = [
     path(r'createrequest/',views.createRequest,name='create_request'),
     path(r'createclub/',views.createClub,name='create_club'),
     path(r'createitem/',views.createItem,name='create_item'),
+    path(r'updaterequest/<int:pk>',views.updateReqStatus,name='update_request'),
+    path(r'deleteuser/<int:pk>',views.deleteUser,name='delete_user'),
 ]
