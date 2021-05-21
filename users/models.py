@@ -15,8 +15,8 @@ class UserProfile(models.Model):
 	name = models.CharField(max_length=200, null=True)
 	club =  models.ForeignKey(Club, null=True, on_delete= models.SET_NULL)
 
-	# def __str__(self):
-	# 	return self.name
+	def __str__(self):
+		return self.name
 
 
 class Item(models.Model):
@@ -24,6 +24,9 @@ class Item(models.Model):
 	quantity = models.IntegerField()
 	club =  models.ManyToManyField(Club)
 	# image = models.ImageField()
+
+	def __str__(self):
+		return self.name
 
 
 class Request(models.Model):
@@ -35,11 +38,12 @@ class Request(models.Model):
 
 	status = models.CharField(max_length=200, null=True, choices=STATUS)
 	comment = models.CharField(max_length=200, null=True)
-	member = models.ForeignKey(User, null=True, on_delete= models.SET_NULL)
+	member = models.ForeignKey(UserProfile, null=True, on_delete= models.SET_NULL)
 	item = models.ForeignKey(Item, null=True, on_delete= models.SET_NULL)
 	timestamp_placed = models.DateTimeField(auto_now_add=True, null=True)
 
-
+	def __str__(self):
+		return self.id
 
 
 

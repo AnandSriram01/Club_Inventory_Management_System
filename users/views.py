@@ -1,9 +1,11 @@
-from django.shortcuts import render
-from users.forms import UserForm, UserProfileInfoForm
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from .models import *
+from .forms import *
+
 
 def index(request):
     return render(request,'users/index.html')
@@ -56,7 +58,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request,user)
-                return HttpResponseRedirect(reverse('index'))
+                return HttpResponse('Welcome', username)
             else:
                 return HttpResponse("Your account was inactive.")
         else:
@@ -65,3 +67,57 @@ def user_login(request):
             return HttpResponse("Invalid login details given")
     else:
         return render(request, 'users/login.html', {})
+
+
+def member_dashboard(request, uname):
+    member = UserProfile.objects.get(name=uname)
+    requests = member.request_set.all()
+    return render(request, 'users/member.html', {'requests':requests})
+
+
+@login_required
+def createRequest(request):
+    created = False
+    if request.method == 'POST':
+        request_form = RequestInfoForm(data=request.POST)
+        if request_form.is_valid():
+            request_form.save()
+            created = True
+        else:
+            print(request_form.errors)
+    else:
+        request_form = RequestInfoForm()
+
+    return render(request,'users/requestForm.html', {'request_form':request_form, 'created':created})
+
+
+@login_required
+def createClub(request):
+    created = False
+    if request.method == 'POST':
+        club_form = ClubInfoForm(data=request.POST)
+        if club_form.is_valid():
+            club_form.save()
+            created = True
+        else:
+            print(club_form.errors)
+    else:
+        club_form = ClubInfoForm()
+
+    return render(request,'users/clubForm.html', {'club_form':club_form, 'created':created})
+
+
+@login_required
+def createItem(request):
+    created = False
+    if request.method == 'POST':
+        item_form = ItemInfoForm(data=request.POST)
+        if item_form.is_valid():
+            item_form.save()
+            created = True
+        else:
+            print(item_form.errors)
+    else:
+        item_form = ItemInfoForm()
+
+    return render(request,'users/itemForm.html', {'item_form':item_form, 'created':created})

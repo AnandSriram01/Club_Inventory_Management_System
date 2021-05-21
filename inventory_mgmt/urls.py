@@ -22,5 +22,9 @@ urlpatterns = [
     path(r'user/', include(('users.urls', 'users'), namespace='users')),
     path(r'',views.index,name='index'),
     path(r'special/',views.special,name='special'),
+    path(r'member/<str:uname>',views.member_dashboard,name='member'),
     path(r'logout/', views.user_logout, name='logout'),
+    path(r'createrequest/',views.createRequest,name='create_request'),
+    path(r'createclub/',views.createClub,name='create_club'),
+    path(r'createitem/',views.createItem,name='create_item'),
 ]
