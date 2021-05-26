@@ -1,0 +1,118 @@
+{%  extends 'users/base.html' %}
+
+{% block body_block %}
+
+<br>
+
+<div class="row">
+	<div class="col-md-5">
+		<h5>USER PROFILES : {{total_users}}</h5>
+		<hr>
+		<div class="card card-body">
+			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'users:register' %}">Create Customer</a>
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Username</th>
+                    <th>Email ID</th>
+                    <th>Club</th>
+				</tr>
+
+				{% for person in users %}
+					<tr>
+						<td>{{person.name}}</td>
+						<td>{{person.user.username}}</td>
+                        <td>{{person.user.email}}</td>
+                        <td>{{person.club}}</td>
+					</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-7">
+		<h5>REQUESTS</h5>
+		<hr>
+		<div class="card card-body">
+
+			<table class="table table-sm">
+				<tr>
+					<th>Date Requested</th>
+					<th>Item</th>
+					<th>Member</th>
+                    <th>Status</th>
+                    <th>Club</th>
+					<th>Update</th>
+					<th>Remove</th>
+				</tr>
+
+				{% for req in reqs %}
+					<tr>
+                        <td>{{req.timestamp_placed}}</td>
+						<td>{{req.item.name}}</td>
+						<td>{{req.member.name}}</td>
+						<td>{{req.status}}</td>
+                        <td>{{req.member.club}}</td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'update_request' req.id %}">Update</a></td>
+
+						<td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
+
+					</tr>
+				{% endfor %}
+
+
+			</table>
+		</div>
+	</div>
+
+</div>
+
+<div class="row">
+	<div class="col-md-4" style="position: absolute; left: 20px;">
+		<h5>CLUBS</h5>
+		<hr>
+		<div class="card card-body">
+			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'create_club' %}">Create Club</a>
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+				</tr>
+
+				{% for club in clubs %}
+					<tr>
+						<td>{{club.name}}</td>
+					</tr>
+				{% endfor %}
+
+			</table>
+		</div>
+	</div>
+
+	<div class="col-md-7" style="position: absolute; right: 0px;">
+		<h5>ITEMS</h5>
+		<hr>
+		<div class="card card-body">
+
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Quantity</th>
+                    <th>Club</th>
+				</tr>
+
+				{% for item in items %}
+					<tr>
+						<td>{{item.name}}</td>
+						<td>{{item.quantity}}</td>
+						<td>{{item.club}}</td>
+					</tr>
+				{% endfor %}
+
+
+			</table>
+		</div>
+	</div>
+
+
+{% endblock %}

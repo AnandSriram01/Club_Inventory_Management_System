@@ -1,0 +1,74 @@
+{%  extends 'users/base.html' %}
+
+{% block body_block %}
+
+<h1> Hi, {{memberProfile}} of club {{memberProfile.club}}</h1>
+
+<br>
+
+	<div class="col-md-6">
+		<h5>REQUESTS</h5>
+		<hr>
+		<div class="card card-body">
+
+			<table class="table table-sm">
+				<tr>
+					<th>Date Requested</th>
+					<th>Item</th>
+					<th>Member</th>
+                    <th>Status</th>
+                    <th>Club</th>
+					<th>Update</th>
+					<th>Remove</th>
+				</tr>
+
+				{% for req in reqs %}
+					<tr>
+                        <td>{{req.timestamp_placed}}</td>
+						<td>{{req.item.name}}</td>
+						<td>{{req.member.name}}</td>
+						<td>{{req.status}}</td>
+                        <td>{{req.member.club}}</td>
+						<td><a class="btn btn-sm btn-info" href="{% url 'update_request' req.id %}">Update</a></td>
+
+						<td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
+
+					</tr>
+				{% endfor %}
+
+
+			</table>
+		</div>
+	</div>
+
+</div>
+
+<div class="row">
+
+	<div class="col-md-6" style="position: absolute; right: 0px;">
+		<h5>ITEMS</h5>
+		<hr>
+		<div class="card card-body">
+
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Quantity</th>
+                    <th>Club</th>
+				</tr>
+
+				{% for item in items %}
+					<tr>
+						<td>{{item.name}}</td>
+						<td>{{item.quantity}}</td>
+						<td>{{item.club}}</td>
+					</tr>
+				{% endfor %}
+
+
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

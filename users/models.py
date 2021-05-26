@@ -11,9 +11,9 @@ class Club(models.Model):
 
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(User,on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'userprofile', null=True, default=None)
 	name = models.CharField(max_length=200, null=True)
-	club =  models.ForeignKey(Club, null=True, on_delete= models.SET_NULL)
+	club =  models.ForeignKey(Club, null=True, on_delete= models.SET_NULL, related_name = 'user_club')
 
 	def __str__(self):
 		return self.name
@@ -22,7 +22,7 @@ class UserProfile(models.Model):
 class Item(models.Model):
 	name = models.CharField(max_length=200, null=True)
 	quantity = models.IntegerField()
-	club =  models.ManyToManyField(Club)
+	club =  models.ForeignKey(Club, null=True, on_delete=models.CASCADE, related_name = 'items_of_club')
 	# image = models.ImageField()
 
 	def __str__(self):
@@ -38,55 +38,9 @@ class Request(models.Model):
 
 	status = models.CharField(max_length=200, null=True, choices=STATUS)
 	comment = models.CharField(max_length=200, null=True)
-	member = models.ForeignKey(UserProfile, null=True, on_delete= models.SET_NULL)
-	item = models.ForeignKey(Item, null=True, on_delete= models.SET_NULL)
+	member = models.ForeignKey(UserProfile, null=True, on_delete=models.CASCADE, related_name = 'requests_of_user')
+	item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
 	timestamp_placed = models.DateTimeField(auto_now_add=True, null=True)
 
 	def __str__(self):
 		return self.status
-
-
-
-
-
-
-
-
-
-# class Tag(models.Model):
-# 	name = models.CharField(max_length=200, null=True)
-#
-# 	def __str__(self):
-# 		return self.name
-#
-# class Product(models.Model):
-# 	CATEGORY = (
-# 			('Indoor', 'Indoor'),
-# 			('Out Door', 'Out Door'),
-# 			)
-#
-# 	name = models.CharField(max_length=200, null=True)
-# 	price = models.FloatField(null=True)
-# 	category = models.CharField(max_length=200, null=True, choices=CATEGORY)
-# 	description = models.CharField(max_length=200, null=True, blank=True)
-# 	date_created = models.DateTimeField(auto_now_add=True, null=True)
-# 	tags = models.ManyToManyField(Tag)
-#
-# 	def __str__(self):
-# 		return self.name
-#
-# class Order(models.Model):
-# 	STATUS = (
-# 			('Pending', 'Pending'),
-# 			('Out for delivery', 'Out for delivery'),
-# 			('Delivered', 'Delivered'),
-# 			)
-#
-# 	customer = models.ForeignKey(Customer, null=True, on_delete= models.SET_NULL)
-# 	product = models.ForeignKey(Product, null=True, on_delete= models.SET_NULL)
-# 	date_created = models.DateTimeField(auto_now_add=True, null=True)
-# 	status = models.CharField(max_length=200, null=True, choices=STATUS)
-# 	note = models.CharField(max_length=1000, null=True)
-#
-# 	def __str__(self):
-# 		return self.product.name

@@ -29,4 +29,6 @@ urlpatterns = [
     path(r'createitem/',views.createItem,name='create_item'),
     path(r'updaterequest/<int:pk>',views.updateReqStatus,name='update_request'),
     path(r'deleteuser/<int:pk>',views.deleteUser,name='delete_user'),
+    path(r'admindb',views.admin_db,name='admin_db'),
+    path(r'memberdb',views.member_db,name='member_db'),
 ]

@@ -33,7 +33,7 @@ def register(request):
 			user.save()
 			profile = profile_form.save(commit=False)
 			profile.user = user
-			profile.name = user.first_name
+			profile.name = user.first_name + ' ' + user.last_name
 			# if 'profile_pic' in request.FILES:
 			#     print('found it')
 			#     profile.profile_pic = request.FILES['profile_pic']
@@ -58,7 +58,7 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request,user)
-				return HttpResponse('Welcome', username)
+				return redirect('member_db')
 			else:
 				return HttpResponse("Your account was inactive.")
 		else:
@@ -149,3 +149,33 @@ def deleteUser(request, pk):
 
 	context = {'user':user, 'deleted':deleted}
 	return render(request, 'users/deleteUser.html', context)
+
+
+def admin_db(request):
+	print(request.user.userprofile)
+	reqs = Request.objects.all()
+	users = UserProfile.objects.all()
+	items = Item.objects.all()
+	clubs = Club.objects.all()
+
+	total_users = users.count()
+	total_reqs = reqs.count()
+
+	context = {'reqs':reqs, 'users':users, 'items':items, 'clubs':clubs, 'total_reqs':total_reqs, 'total_users':total_users}
+
+	return render(request, 'users/admin_dashboard.html', context)
+
+
+def member_db(request):
+	print(request.user.username)
+	userobj = request.user
+	memberProfile = UserProfile.objects.get(user = userobj)
+	clubProfile = memberProfile.club
+	print(memberProfile)
+	reqs = memberProfile.requests_of_user.all
+	items = clubProfile.items_of_club.all
+
+	context = {'memberProfile':memberProfile, 'reqs':reqs, 'items':items}
+	print(context)
+
+	return render(request, 'users/member_dashboard.html', context)
