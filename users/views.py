@@ -158,10 +158,7 @@ def admin_db(request):
 	items = Item.objects.all()
 	clubs = Club.objects.all()
 
-	total_users = users.count()
-	total_reqs = reqs.count()
-
-	context = {'reqs':reqs, 'users':users, 'items':items, 'clubs':clubs, 'total_reqs':total_reqs, 'total_users':total_users}
+	context = {'reqs':reqs, 'users':users, 'items':items, 'clubs':clubs}
 
 	return render(request, 'users/admin_dashboard.html', context)
 
@@ -179,3 +176,19 @@ def member_db(request):
 	print(context)
 
 	return render(request, 'users/member_dashboard.html', context)
+
+
+def convenor_db(request):
+	print(request.user.username)
+	userobj = request.user
+	memberProfile = UserProfile.objects.get(user = userobj)
+	clubProfile = memberProfile.club
+	print(memberProfile)
+	reqs = Request.objects.filter(item__club = clubProfile)
+	items = clubProfile.items_of_club.all
+	users = UserProfile.objects.filter(club=clubProfile)
+
+	context = {'memberProfile':memberProfile, 'reqs':reqs, 'items':items, 'users':users}
+	print(context)
+
+	return render(request, 'users/convenor_dashboard.html', context)

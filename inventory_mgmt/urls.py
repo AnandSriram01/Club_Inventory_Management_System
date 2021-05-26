@@ -31,4 +31,5 @@ urlpatterns = [
     path(r'deleteuser/<int:pk>',views.deleteUser,name='delete_user'),
     path(r'admindb',views.admin_db,name='admin_db'),
     path(r'memberdb',views.member_db,name='member_db'),
+    path(r'convenordb',views.convenor_db,name='convenor_db'),
 ]

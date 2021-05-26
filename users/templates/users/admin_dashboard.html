@@ -6,10 +6,10 @@
 
 <div class="row">
 	<div class="col-md-5">
-		<h5>USER PROFILES : {{total_users}}</h5>
+		<h5>USER PROFILES</h5>
 		<hr>
 		<div class="card card-body">
-			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'users:register' %}">Create Customer</a>
+			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'users:register' %}">Create User</a>
 			<table class="table table-sm">
 				<tr>
 					<th>Name</th>
@@ -43,8 +43,6 @@
 					<th>Member</th>
                     <th>Status</th>
                     <th>Club</th>
-					<th>Update</th>
-					<th>Remove</th>
 				</tr>
 
 				{% for req in reqs %}
@@ -54,10 +52,6 @@
 						<td>{{req.member.name}}</td>
 						<td>{{req.status}}</td>
                         <td>{{req.member.club}}</td>
-						<td><a class="btn btn-sm btn-info" href="{% url 'update_request' req.id %}">Update</a></td>
-
-						<td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
-
 					</tr>
 				{% endfor %}
 
