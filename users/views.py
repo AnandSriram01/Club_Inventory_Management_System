@@ -34,9 +34,6 @@ def register(request):
 			profile = profile_form.save(commit=False)
 			profile.user = user
 			profile.name = user.first_name + ' ' + user.last_name
-			# if 'profile_pic' in request.FILES:
-			#     print('found it')
-			#     profile.profile_pic = request.FILES['profile_pic']
 			profile.save()
 			registered = True
 		else:
@@ -69,24 +66,28 @@ def user_login(request):
 		return render(request, 'users/login.html', {})
 
 
-def member_dashboard(request, uname):
-	member = UserProfile.objects.get(name=uname)
-	requests = member.request_set.all()
-	return render(request, 'users/member.html', {'requests':requests})
-
-
 @login_required
-def createRequest(request):
+def createRequest(request, member):
 	created = False
+	memberProfile = UserProfile.objects.get(pk=member)
 	if request.method == 'POST':
-		request_form = RequestInfoForm(data=request.POST)
+		request_form = RequestInfoForm(data=request.POST, initial={'member':memberProfile, 'status':'Awaiting Approval'})
+		request_form.fields['item'].queryset = memberProfile.club.items_of_club.all()
+		request_form.fields['member'].disabled = True
+		request_form.fields['status'].disabled = True
 		if request_form.is_valid():
-			request_form.save()
+			req = request_form
+			req.member = member
+			req.save()
 			created = True
+			return redirect('member_db')
 		else:
 			print(request_form.errors)
 	else:
-		request_form = RequestInfoForm()
+		request_form = RequestInfoForm(initial={'member':memberProfile, 'status':'Awaiting Approval'})
+		request_form.fields['item'].queryset = memberProfile.club.items_of_club.all()
+		request_form.fields['member'].disabled = True
+		request_form.fields['status'].disabled = True
 
 	return render(request,'users/requestForm.html', {'request_form':request_form, 'created':created})
 
@@ -99,6 +100,7 @@ def createClub(request):
 		if club_form.is_valid():
 			club_form.save()
 			created = True
+			return redirect('admin_db')
 		else:
 			print(club_form.errors)
 	else:
@@ -108,44 +110,62 @@ def createClub(request):
 
 
 @login_required
-def createItem(request):
+def createItem(request, club):
 	created = False
+	clubProfile = Club.objects.get(id=club)
+	print(clubProfile.name)
 	if request.method == 'POST':
-		item_form = ItemInfoForm(data=request.POST)
+		item_form = ItemInfoForm(data=request.POST, initial={'club':clubProfile})
+		item_form.fields['club'].disabled = True
 		if item_form.is_valid():
-			item_form.save()
+			item = item_form
+			item.club = club
+			item.save()
+			return redirect('convenor_db')
 			created = True
 		else:
 			print(item_form.errors)
 	else:
-		item_form = ItemInfoForm()
+		item_form = ItemInfoForm(initial={'club':clubProfile})
+		item_form.fields['club'].disabled = True
+		print(item_form.fields)
+		# item_form.fields['user_club'] = clubProfile.name
 
 	return render(request,'users/itemForm.html', {'item_form':item_form, 'created':created})
 
 
-def updateReqStatus(request, pk):
+def updateReqStatus(request, req):
 	updated = False
-	req = Request.objects.get(id=pk)
+	req = Request.objects.get(id=req)
 
 	if request.method == 'POST':
 		request_form = RequestInfoForm(request.POST, instance=req)
+		request_form.fields['comment'].disabled = True
+		request_form.fields['member'].disabled = True
+		request_form.fields['item'].disabled = True
 		if request_form.is_valid():
 			request_form.save()
 			updated = True
+			return redirect('convenor_db')
 	else:
 		request_form = RequestInfoForm(instance=req)
+		request_form.fields['comment'].disabled = True
+		request_form.fields['member'].disabled = True
+		request_form.fields['item'].disabled = True
+		print(request_form)
 
 	context = {'request_form':request_form, 'updated':updated}
 	return render(request, 'users/requestForm.html', context)
 
 
-def deleteUser(request, pk):
+def deleteUser(request, user):
 	deleted = False
-	user = UserProfile.objects.get(id=pk)
+	user = UserProfile.objects.get(id=user)
 
 	if request.method == "POST":
 		user.delete()
 		deleted = True
+		return redirect('admin_db')
 
 	context = {'user':user, 'deleted':deleted}
 	return render(request, 'users/deleteUser.html', context)

@@ -1,9 +1,0 @@
-{% extends "users/base.html" %}
-
-{% block body_block %}
-
-{% for r in requests %}
-    <p>{{r.item.name}},{{r.member}},{{r.status}},{{r.comment}}</p>
-{% endfor %}
-
-{% endblock %}
