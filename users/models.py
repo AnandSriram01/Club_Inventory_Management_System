@@ -39,7 +39,7 @@ class Request(models.Model):
 	status = models.CharField(max_length=200, null=True, choices=STATUS)
 	comment = models.CharField(max_length=200, null=True)
 	member = models.ForeignKey(UserProfile, null=True, on_delete=models.CASCADE, related_name = 'requests_of_user')
-	item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
+	item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE, related_name = 'requests_of_item')
 	timestamp_placed = models.DateTimeField(auto_now_add=True, null=True)
 
 	def __str__(self):

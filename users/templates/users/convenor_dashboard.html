@@ -2,7 +2,7 @@
 
 {% block body_block %}
 
-<h1> Hi, {{memberProfile}} of club {{memberProfile.club}}</h1>
+<h1> Hi {{memberProfile}}, Convenor of club {{memberProfile.club}}</h1>
 
 <br>
 
@@ -41,7 +41,8 @@
 					<th>Member</th>
                     <th>Status</th>
                     <th>Club</th>
-					<th>Update Status</th>
+					<th>Accept</th>
+                    <th>Deny</th>
 				</tr>
 
 				{% for req in reqs %}
@@ -51,7 +52,10 @@
 						<td>{{req.member.name}}</td>
 						<td>{{req.status}}</td>
                         <td>{{req.member.club}}</td>
-						<td><a class="btn btn-sm btn-info" href="{% url 'update_request' req.id %}">Update</a></td>
+                        {% if req.status == 'Awaiting Approval' %}
+    						<td><a class="btn btn-sm btn-info" href="{% url 'accept_request' req.id %}">Accept</a></td>
+                            <td><a class="btn btn-sm btn-info" href="{% url 'deny_request' req.id %}">Deny</a></td>
+                        {% endif %}
 					</tr>
 				{% endfor %}
 

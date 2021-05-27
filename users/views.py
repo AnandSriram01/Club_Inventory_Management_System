@@ -134,29 +134,26 @@ def createItem(request, club):
 	return render(request,'users/itemForm.html', {'item_form':item_form, 'created':created})
 
 
-def updateReqStatus(request, req):
-	updated = False
-	req = Request.objects.get(id=req)
+def acceptRequest(request, req):
+	requestobj = Request.objects.get(id=req)
+	print(requestobj.status)
+	requestobj.status = 'Accepted By Convenor'
+	requestobj.item.quantity -= 1
+	requestobj.save()
+	requestobj.item.save()
+	print(requestobj.status)
 
-	if request.method == 'POST':
-		request_form = RequestInfoForm(request.POST, instance=req)
-		request_form.fields['comment'].disabled = True
-		request_form.fields['member'].disabled = True
-		request_form.fields['item'].disabled = True
-		if request_form.is_valid():
-			request_form.save()
-			updated = True
-			return redirect('convenor_db')
-	else:
-		request_form = RequestInfoForm(instance=req)
-		request_form.fields['comment'].disabled = True
-		request_form.fields['member'].disabled = True
-		request_form.fields['item'].disabled = True
-		print(request_form)
+	return redirect('convenor_db')
 
-	context = {'request_form':request_form, 'updated':updated}
-	return render(request, 'users/requestForm.html', context)
 
+def denyRequest(request, req):
+	requestobj = Request.objects.get(id=req)
+	print(requestobj.status)
+	requestobj.status = 'Rejected By Convenor'
+	requestobj.save()
+	print(requestobj.status)
+
+	return redirect('convenor_db')
 
 def deleteUser(request, user):
 	deleted = False
@@ -199,16 +196,26 @@ def member_db(request):
 
 
 def convenor_db(request):
-	print(request.user.username)
+	# print(request.user.username)
 	userobj = request.user
 	memberProfile = UserProfile.objects.get(user = userobj)
 	clubProfile = memberProfile.club
-	print(memberProfile)
+	# print(memberProfile)
 	reqs = Request.objects.filter(item__club = clubProfile)
-	items = clubProfile.items_of_club.all
+	items = clubProfile.items_of_club.all()
 	users = UserProfile.objects.filter(club=clubProfile)
+	print(items)
+	items_for_alert = []
 
-	context = {'memberProfile':memberProfile, 'reqs':reqs, 'items':items, 'users':users}
-	print(context)
+	for item in items:
+		item_qty = item.quantity
+		item_reqs = item.requests_of_item.all()
+		num_of_reqs = item_reqs.count()
+		print(item, item_qty, item_reqs, num_of_reqs)
+		if num_of_reqs > item_qty:
+			items_for_alert.append[item.name]
+
+	context = {'memberProfile':memberProfile, 'reqs':reqs, 'items':items, 'users':users, 'items_for_alert':items_for_alert}
+	# print(context)
 
 	return render(request, 'users/convenor_dashboard.html', context)
