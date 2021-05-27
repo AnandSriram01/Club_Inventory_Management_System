@@ -3,8 +3,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group, Permission
 from .models import *
 from .forms import *
+from .decorators import *
 
 
 def index(request):
@@ -55,7 +57,7 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request,user)
-				return redirect('member_db')
+				return redirect('/')
 			else:
 				return HttpResponse("Your account was inactive.")
 		else:
@@ -167,7 +169,7 @@ def deleteUser(request, user):
 	context = {'user':user, 'deleted':deleted}
 	return render(request, 'users/deleteUser.html', context)
 
-
+@allowed_users(allowed_roles=['Admin'])
 def admin_db(request):
 	print(request.user.userprofile)
 	reqs = Request.objects.all()
@@ -179,8 +181,10 @@ def admin_db(request):
 
 	return render(request, 'users/admin_dashboard.html', context)
 
-
+@allowed_users(allowed_roles=['Member'])
 def member_db(request):
+	# print(request.user.get_all_permissions())
+	# print(request.user.has_perm('users.view_request'))
 	print(request.user.username)
 	userobj = request.user
 	memberProfile = UserProfile.objects.get(user = userobj)
@@ -195,6 +199,7 @@ def member_db(request):
 	return render(request, 'users/member_dashboard.html', context)
 
 
+@allowed_users(allowed_roles=['Convenor'])
 def convenor_db(request):
 	# print(request.user.username)
 	userobj = request.user
