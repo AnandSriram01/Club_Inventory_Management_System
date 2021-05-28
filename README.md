@@ -16,8 +16,8 @@ And fill in the username and password of your choice.
 
 Then Execute the 2 following commands.
 
-- python manage.py makemigrations
-= python manage.py migrate
+python manage.py makemigrations <br />
+python manage.py migrate
 
 
 Run the below command to have the Django server running.
