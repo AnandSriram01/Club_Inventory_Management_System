@@ -11,10 +11,10 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileInfoForm(forms.ModelForm):
-    # club = forms.CharField()
+
     class Meta():
         model = UserProfile
-        fields = ('club',)
+        fields = ('club', 'role')
 
 class RequestInfoForm(forms.ModelForm):
     # club = forms.CharField()

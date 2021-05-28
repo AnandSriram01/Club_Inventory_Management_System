@@ -2,15 +2,13 @@
 
 {% block body_block %}
 
-<h1> Hi {{memberProfile}}, Member of club {{memberProfile.club}}</h1>
-
 <br>
 
-	<div class="col-md-6">
+	<div class="col-md-6" style="left: 25px;">
 		<h5>REQUESTS</h5>
-		<hr>
 		<div class="card card-body">
-            <a class="btn btn-primary  btn-sm btn-block" href="{% url 'create_request' memberProfile.id %}">Create Request</a>
+            <a class="btn btn-primary btn-sm" style="position: absolute; left: 30%; width: 150px;" href="{% url 'create_request' memberProfile.id %}">Create Request</a>
+  			<br><br><br>
 			<table class="table table-sm">
 				<tr>
 					<th>Date Requested</th>
@@ -22,7 +20,7 @@
 					<tr>
                         <td>{{req.timestamp_placed}}</td>
 						<td>{{req.item.name}}</td>
-						<td>{{req.member.name}}</td>
+						<td>{{req.status}}</td>
 					</tr>
 				{% endfor %}
 

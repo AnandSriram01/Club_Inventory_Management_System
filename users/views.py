@@ -13,7 +13,7 @@ def index(request):
 	return render(request,'users/index.html')
 
 
-@login_required
+@login_required(login_url='users:user_login')
 def special(request):
 	return HttpResponse("You are logged in !")
 
@@ -21,7 +21,7 @@ def special(request):
 @login_required
 def user_logout(request):
 	logout(request)
-	return HttpResponseRedirect(reverse('index'))
+	return render(request, 'users/login.html')
 
 
 def register(request):
@@ -36,6 +36,11 @@ def register(request):
 			profile = profile_form.save(commit=False)
 			profile.user = user
 			profile.name = user.first_name + ' ' + user.last_name
+			print(profile.role)
+			role = profile.role
+			group = Group.objects.get(name=role)
+			user.groups.add(group)
+			user.save()
 			profile.save()
 			registered = True
 		else:
@@ -43,6 +48,7 @@ def register(request):
 	else:
 		user_form = UserForm()
 		profile_form = UserProfileInfoForm()
+		print(profile_form)
 	return render(request,'users/registration.html',
 						  {'user_form':user_form,
 						   'profile_form':profile_form,
@@ -50,6 +56,7 @@ def register(request):
 
 
 def user_login(request):
+	invalid = False
 	if request.method == 'POST':
 		username = request.POST.get('username')
 		password = request.POST.get('password')
@@ -57,13 +64,21 @@ def user_login(request):
 		if user:
 			if user.is_active:
 				login(request,user)
-				return redirect('/')
+				role = request.user.groups.all()[0].name
+				print(role)
+				if role == 'Convenor':
+					return redirect('convenor_db')
+				elif role == 'Member':
+					return redirect('member_db')
+				elif role == 'Admin':
+					return redirect('admin_db')
+
+				return HttpResponse("Logged In")
 			else:
 				return HttpResponse("Your account was inactive.")
 		else:
-			print("Someone tried to login and failed.")
-			print("They used username: {} and password: {}".format(username,password))
-			return HttpResponse("Invalid login details given")
+			invalid = True
+			return render(request, 'users/login.html', {'invalid':invalid})
 	else:
 		return render(request, 'users/login.html', {})
 
@@ -173,7 +188,7 @@ def deleteUser(request, user):
 def admin_db(request):
 	print(request.user.userprofile)
 	reqs = Request.objects.all()
-	users = UserProfile.objects.all()
+	users = UserProfile.objects.filter(role__in=['Convenor','Member'])
 	items = Item.objects.all()
 	clubs = Club.objects.all()
 
@@ -181,10 +196,9 @@ def admin_db(request):
 
 	return render(request, 'users/admin_dashboard.html', context)
 
+
 @allowed_users(allowed_roles=['Member'])
 def member_db(request):
-	# print(request.user.get_all_permissions())
-	# print(request.user.has_perm('users.view_request'))
 	print(request.user.username)
 	userobj = request.user
 	memberProfile = UserProfile.objects.get(user = userobj)
@@ -208,7 +222,7 @@ def convenor_db(request):
 	# print(memberProfile)
 	reqs = Request.objects.filter(item__club = clubProfile)
 	items = clubProfile.items_of_club.all()
-	users = UserProfile.objects.filter(club=clubProfile)
+	users = UserProfile.objects.filter(club=clubProfile, role='Member')
 	print(items)
 	items_for_alert = []
 
@@ -218,9 +232,9 @@ def convenor_db(request):
 		num_of_reqs = item_reqs.count()
 		print(item, item_qty, item_reqs, num_of_reqs)
 		if num_of_reqs > item_qty:
-			items_for_alert.append[item.name]
+			items_for_alert.append(item.name)
 
-	context = {'memberProfile':memberProfile, 'reqs':reqs, 'items':items, 'users':users, 'items_for_alert':items_for_alert}
+	context = {'memberProfile':memberProfile, 'reqs':reqs, 'items':items, 'users':users, 'items_for_alert':items_for_alert,}
 	# print(context)
 
 	return render(request, 'users/convenor_dashboard.html', context)

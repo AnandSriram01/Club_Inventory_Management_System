@@ -2,20 +2,47 @@
 
 {% block body_block %}
 
+<style>
+
+    #main {
+      width: 100%;
+      background-color: skyblue;
+    }
+    h1 {
+      margin: 20px;
+        display: inline-block;
+    }
+    a {
+      float: right;
+      margin: 20px;
+      width: 100px;
+    }
+
+</style>
+
+<div id="main">
+	<h1>Admin</h1>
+	<a class="btn btn-sm btn-danger" href="{% url 'logout' %}">Logout</a>
+</div>
+
 <br>
 
 <div class="row">
-	<div class="col-md-5">
+	<div class="col-md-6">
 		<h5>USER PROFILES</h5>
-		<hr>
+
 		<div class="card card-body">
-			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'users:register' %}">Create User</a>
+			<a class="btn btn-primary  btn-sm" style="position: absolute; left: 30%;" href="{% url 'users:register' %}">Create User</a>
+			<br><br><br>
+
 			<table class="table table-sm">
 				<tr>
 					<th>Name</th>
 					<th>Username</th>
                     <th>Email ID</th>
                     <th>Club</th>
+					<th>Role</th>
+					<th>Delete</th>
 				</tr>
 
 				{% for person in users %}
@@ -24,6 +51,8 @@
 						<td>{{person.user.username}}</td>
                         <td>{{person.user.email}}</td>
                         <td>{{person.club}}</td>
+						<td>{{person.role}}</td>
+						<td><a class="btn btn-sm btn-danger" href="{% url 'delete_user' person.id %}">Delete</a></td>
 					</tr>
 				{% endfor %}
 
@@ -31,7 +60,7 @@
 		</div>
 	</div>
 
-	<div class="col-md-7">
+	<div class="col-md-6">
 		<h5>REQUESTS</h5>
 		<hr>
 		<div class="card card-body">
@@ -63,11 +92,12 @@
 </div>
 
 <div class="row">
-	<div class="col-md-4" style="position: absolute; left: 20px;">
+	<div class="col-md-6" style="position: absolute; left: 20px;">
 		<h5>CLUBS</h5>
-		<hr>
 		<div class="card card-body">
-			<a class="btn btn-primary  btn-sm btn-block" href="{% url 'create_club' %}">Create Club</a>
+			<a class="btn btn-primary  btn-sm" style="position: absolute; left: 30%;" href="{% url 'create_club' %}">Create Club</a>
+			<br><br><br>
+
 			<table class="table table-sm">
 				<tr>
 					<th>Name</th>
@@ -83,7 +113,7 @@
 		</div>
 	</div>
 
-	<div class="col-md-7" style="position: absolute; right: 0px;">
+	<div class="col-md-6" style="position: absolute; right: 0px;">
 		<h5>ITEMS</h5>
 		<hr>
 		<div class="card card-body">

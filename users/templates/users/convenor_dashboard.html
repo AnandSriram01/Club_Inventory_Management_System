@@ -2,12 +2,10 @@
 
 {% block body_block %}
 
-<h1> Hi {{memberProfile}}, Convenor of club {{memberProfile.club}}</h1>
-
 <br>
 
 <div class="row">
-<div class="col-md-6">
+<div class="col-md-6" style="left: 25px;">
     <h5>USER PROFILES</h5>
     <hr>
     <div class="card card-body">
@@ -32,7 +30,16 @@
 
 	<div class="col-md-6">
 		<h5>REQUESTS</h5>
-		<hr>
+
+        {% if items_for_alert %}
+
+    		<p>Items with more requests than quantity : </p>
+            {% for item in items_for_alert %}
+                <ul>{{ item }}</ul>
+            {% endfor %}
+
+        {% endif %}
+
 		<div class="card card-body">
 			<table class="table table-sm">
 				<tr>
@@ -52,9 +59,13 @@
 						<td>{{req.member.name}}</td>
 						<td>{{req.status}}</td>
                         <td>{{req.member.club}}</td>
-                        {% if req.status == 'Awaiting Approval' %}
+                        {% if req.item.quantity <= 0 %}
+                            <td> Out of Stock </td>
+
+                        {% elif req.status == 'Awaiting Approval' %}
     						<td><a class="btn btn-sm btn-info" href="{% url 'accept_request' req.id %}">Accept</a></td>
-                            <td><a class="btn btn-sm btn-info" href="{% url 'deny_request' req.id %}">Deny</a></td>
+                            <td><a class="btn btn-sm btn-danger" href="{% url 'deny_request' req.id %}">Deny</a></td>
+
                         {% endif %}
 					</tr>
 				{% endfor %}
@@ -67,11 +78,12 @@
 
 <div class="row">
 
-	<div class="col-md-6" style="position: absolute; right: 0px;">
+	<div class="col-md-6" style="position: absolute; left: 10px;">
 		<h5>ITEMS</h5>
-		<hr>
-		<div class="card card-body">
-            <a class="btn btn-primary  btn-sm btn-block" href="{% url 'create_item' memberProfile.club_id %}">Add Item</a>
+        <a class="btn btn-primary btn-sm" style="position: absolute; left: 30%;" href="{% url 'create_item' memberProfile.club_id %}">Add Item</a>
+        <br><br><br>
+
+        <div class="card card-body">
 			<table class="table table-sm">
 				<tr>
 					<th>Name</th>
@@ -82,7 +94,13 @@
 				{% for item in items %}
 					<tr>
 						<td>{{item.name}}</td>
-						<td>{{item.quantity}}</td>
+
+                        {% if item.quantity <= 0 %}
+                            <td>Out of Stock<td>
+                        {% else %}
+						    <td>{{item.quantity}}</td>
+                        {% endif %}
+
 						<td>{{item.club}}</td>
 					</tr>
 				{% endfor %}

@@ -1,0 +1,35 @@
+{% load static %}
+
+<style>
+
+    #main {
+      width: 100%;
+      background-color: skyblue;
+    }
+    h1 {
+      margin: 20px;
+        display: inline-block;
+    }
+    a {
+      float: right;
+      margin: 20px;
+      width: 100px;
+    }
+
+</style>
+
+<div id="main">
+    {% if memberProfile.role == 'Convenor' %}
+        <h1> Hi {{memberProfile}}, Convenor of club {{memberProfile.club}}</h1>
+        <a class="btn btn-sm btn-danger" href="{% url 'logout' %}">Logout</a>
+
+    {% elif memberProfile.role == 'Member' %}
+        <h1> Hi {{memberProfile}}, Member of club {{memberProfile.club}}</h1>
+        <a class="btn btn-sm btn-danger" href="{% url 'logout' %}">Logout</a>
+
+    {% endif %}
+
+</div>
+
+
+</nav>
