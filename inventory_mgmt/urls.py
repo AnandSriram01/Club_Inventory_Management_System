@@ -19,16 +19,18 @@ from users import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     path(r'user/', include(('users.urls', 'users'), namespace='users')),
-    path(r'',views.index,name='index'),
-    path(r'special/',views.special,name='special'),
     path(r'logout/', views.user_logout, name='logout'),
+
     path(r'createrequest/<int:member>',views.createRequest,name='create_request'),
     path(r'createclub/',views.createClub,name='create_club'),
     path(r'createitem/<int:club>',views.createItem,name='create_item'),
+
     path(r'acceptrequest/<int:req>',views.acceptRequest,name='accept_request'),
     path(r'denyrequest/<int:req>',views.denyRequest,name='deny_request'),
     path(r'deleteuser/<int:user>',views.deleteUser,name='delete_user'),
+
     path(r'admindb',views.admin_db,name='admin_db'),
     path(r'memberdb',views.member_db,name='member_db'),
     path(r'convenordb',views.convenor_db,name='convenor_db'),
